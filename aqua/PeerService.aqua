@@ -1,0 +1,6 @@
+-- PeerService
+data Peers:
+  peers: []string
+
+service PeerService("Peer_service"):
+  getPeers() -> Peers

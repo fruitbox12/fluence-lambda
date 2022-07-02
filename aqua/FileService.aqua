@@ -1,0 +1,10 @@
+-- FileService
+
+data File:
+  path: string
+
+service FileService("file_service"):
+   uploadFile(file: File)
+   shareFile(recepients: []string, cid: string)
+   getUploadHistory(userId: string) -> []string
+   

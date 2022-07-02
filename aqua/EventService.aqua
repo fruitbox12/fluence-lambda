@@ -1,0 +1,4 @@
+-- EventService
+service EventService("Events_service"):
+    emitEvent(event: string)
+    registerEvent(event: string)

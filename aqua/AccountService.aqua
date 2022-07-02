@@ -1,0 +1,10 @@
+-- AccountService
+data User:
+    publicKey: string
+    privateKey: string
+    password: string
+    timestamp_ms: f64
+
+service AccountService("AccountService"):
+    createAccount(user: User) -> bool
+    getFileUploadHistory(publicKey: string, privateKey: string) -> []string
