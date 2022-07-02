@@ -6,7 +6,7 @@
   "author": "naftalimurgor <murgornaftali@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "compile-aqua": "aqua -i ./aqua/ -o ./src/_aqua",
+    "compile-aqua": "aqua -i ./aqua/ -o ./src/services/_aqua",
     "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
   },
   "dependencies": {
