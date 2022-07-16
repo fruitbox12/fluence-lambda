@@ -8,3 +8,5 @@ data User:
 service AccountService("AccountService"):
     createAccount(user: User) -> bool
     getFileUploadHistory(publicKey: string, privateKey: string) -> []string
+
+-- God, this is browser to hosted service, how hilarious
