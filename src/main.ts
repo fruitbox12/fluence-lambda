@@ -1,7 +1,9 @@
 import { Fluence, KeyPair } from '@fluencelabs/fluence'
 import { krasnodar } from '@fluencelabs/fluence-network-environment'
 
-import {registerEventService, EventServiceDef} from './services/_aqua/EventService'
+import { registerEventService, EventServiceDef } from './services/_aqua/EventService'
+import { registerFileService, FileServiceDef } from './services/_aqua/FileService'
+import { registerAccountService, AccountServiceDef } from './services/_aqua/AccountService'
 
 const peerId = '12D3KooWJBjU564QNF8MKQnyPXqvcgf4bxp7hHLiwYp8zkgMwpbz'
 const publicKey = 'CAESIHxWxmPmfcHVAkxP1ahfyCXrTwUNTymZv8gmJVC5mNLZ'
@@ -13,7 +15,7 @@ async function server() {
   })
 
   // all services declarations here
-  // Event -> emit -> perfrom action
+  // Event -> emit -> perform action
   // <- result with the event back to client peer <- browser
   // register callbacks with Eventbased mechanisms
 }
