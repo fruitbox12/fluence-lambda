@@ -1,12 +1,14 @@
 -- AccountService
+data SignatureObject:
+    messageHash: string
+    r: string
+    s: string
+    v: string
+
 data User:
-    publicKey: string
     privateKey: string
-    password: string
-    timestamp_ms: f64
+    address: string
 
 service AccountService("AccountService"):
-    createAccount(user: User) -> bool
-    getFileUploadHistory(publicKey: string, privateKey: string) -> []string
-
--- God, this is browser to hosted service, how hilarious
+    createAccount() -> User
+    login(signatureObject: SignatureObject,privateKey: string) -> bool

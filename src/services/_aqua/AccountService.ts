@@ -17,8 +17,8 @@ import {
 // Services
 
 export interface AccountServiceDef {
-    createAccount: (user: { password: string; privateKey: string; publicKey: string; timestamp_ms: number; }, callParams: CallParams<'user'>) => boolean | Promise<boolean>;
-    getFileUploadHistory: (publicKey: string, privateKey: string, callParams: CallParams<'publicKey' | 'privateKey'>) => string[] | Promise<string[]>;
+    createAccount: (callParams: CallParams<null>) => { address: string; privateKey: string; } | Promise<{ address: string; privateKey: string; }>;
+    login: (signatureObject: { messageHash: string; r: string; s: string; v: string; }, privateKey: string, callParams: CallParams<'signatureObject' | 'privateKey'>) => boolean | Promise<boolean>;
 }
 export function registerAccountService(service: AccountServiceDef): void;
 export function registerAccountService(serviceId: string, service: AccountServiceDef): void;
@@ -37,50 +37,54 @@ export function registerAccountService(...args: any) {
             "createAccount" : {
                 "tag" : "arrow",
                 "domain" : {
-                    "tag" : "labeledProduct",
-                    "fields" : {
-                        "user" : {
+                    "tag" : "nil"
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
                             "tag" : "struct",
                             "name" : "User",
                             "fields" : {
-                                "password" : {
+                                "address" : {
                                     "tag" : "scalar",
                                     "name" : "string"
                                 },
                                 "privateKey" : {
                                     "tag" : "scalar",
                                     "name" : "string"
-                                },
-                                "publicKey" : {
-                                    "tag" : "scalar",
-                                    "name" : "string"
-                                },
-                                "timestamp_ms" : {
-                                    "tag" : "scalar",
-                                    "name" : "f64"
                                 }
                             }
-                        }
-                    }
-                },
-                "codomain" : {
-                    "tag" : "unlabeledProduct",
-                    "items" : [
-                        {
-                            "tag" : "scalar",
-                            "name" : "bool"
                         }
                     ]
                 }
             },
-            "getFileUploadHistory" : {
+            "login" : {
                 "tag" : "arrow",
                 "domain" : {
                     "tag" : "labeledProduct",
                     "fields" : {
-                        "publicKey" : {
-                            "tag" : "scalar",
-                            "name" : "string"
+                        "signatureObject" : {
+                            "tag" : "struct",
+                            "name" : "SignatureObject",
+                            "fields" : {
+                                "messageHash" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "r" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "s" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "v" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                }
+                            }
                         },
                         "privateKey" : {
                             "tag" : "scalar",
@@ -92,11 +96,8 @@ export function registerAccountService(...args: any) {
                     "tag" : "unlabeledProduct",
                     "items" : [
                         {
-                            "tag" : "array",
-                            "type" : {
-                                "tag" : "scalar",
-                                "name" : "string"
-                            }
+                            "tag" : "scalar",
+                            "name" : "bool"
                         }
                     ]
                 }
