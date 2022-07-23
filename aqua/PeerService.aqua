@@ -1,6 +1,16 @@
 -- PeerService
-data Peers:
-  peers: []string
+import "AccountService"
 
-service PeerService("Peer_service"):
-  getPeers() -> Peers
+const PEER_ID ?= "PEER_ID"
+const RELAY ?= "PEER_ID"
+
+-- AccountService calls
+func createAccount() -> User:
+    on PEER_ID via RELAY:
+        res <- AccountService.createAccount()
+      <- res
+
+func login(signatureObject: SignatureObject, privateKey: string) -> bool:
+   on PEER_ID via RELAY:
+        res <- AccountService.login(signatureObject, privateKey)
+    <- res

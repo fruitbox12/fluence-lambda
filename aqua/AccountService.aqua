@@ -11,4 +11,4 @@ data User:
 
 service AccountService("AccountService"):
     createAccount() -> User
-    login(signatureObject: SignatureObject,privateKey: string) -> bool
+    login(signatureObject: SignatureObject, privateKey: string) -> bool
