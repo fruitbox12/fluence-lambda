@@ -16,52 +16,200 @@ import {
 
 // Services
 
-export interface PeerServiceDef {
-    getPeers: (callParams: CallParams<null>) => { peers: string[]; } | Promise<{ peers: string[]; }>;
-}
-export function registerPeerService(service: PeerServiceDef): void;
-export function registerPeerService(serviceId: string, service: PeerServiceDef): void;
-export function registerPeerService(peer: FluencePeer, service: PeerServiceDef): void;
-export function registerPeerService(peer: FluencePeer, serviceId: string, service: PeerServiceDef): void;
-       
+// Functions
+ 
+export type CreateAccountResult = { address: string; privateKey: string; }
+export function createAccount(
+    config?: {ttl?: number}
+): Promise<CreateAccountResult>;
 
-export function registerPeerService(...args: any) {
-    registerService(
+export function createAccount(
+    peer: FluencePeer,
+    config?: {ttl?: number}
+): Promise<CreateAccountResult>;
+
+export function createAccount(...args: any) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                        (call -relay- ("op" "noop") [])
+                       )
+                       (xor
+                        (seq
+                         (call "PEER_ID" ("AccountService" "createAccount") [] res)
+                         (call -relay- ("op" "noop") [])
+                        )
+                        (seq
+                         (call -relay- ("op" "noop") [])
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                        )
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                    )
+    `
+    return callFunction(
         args,
         {
-    "defaultServiceId" : "Peer_service",
-    "functions" : {
-        "tag" : "labeledProduct",
-        "fields" : {
-            "getPeers" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
-                },
-                "codomain" : {
-                    "tag" : "unlabeledProduct",
-                    "items" : [
-                        {
-                            "tag" : "struct",
-                            "name" : "Peers",
-                            "fields" : {
-                                "peers" : {
-                                    "tag" : "array",
-                                    "type" : {
-                                        "tag" : "scalar",
-                                        "name" : "string"
-                                    }
-                                }
-                            }
+    "functionName" : "createAccount",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "User",
+                    "fields" : {
+                        "address" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "privateKey" : {
+                            "tag" : "scalar",
+                            "name" : "string"
                         }
-                    ]
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+export type LoginArgSignatureObject = { messageHash: string; r: string; s: string; v: string; } 
+
+export function login(
+    signatureObject: LoginArgSignatureObject,
+    privateKey: string,
+    config?: {ttl?: number}
+): Promise<boolean>;
+
+export function login(
+    peer: FluencePeer,
+    signatureObject: LoginArgSignatureObject,
+    privateKey: string,
+    config?: {ttl?: number}
+): Promise<boolean>;
+
+export function login(...args: any) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                          (call %init_peer_id% ("getDataSrv" "signatureObject") [] signatureObject)
+                         )
+                         (call %init_peer_id% ("getDataSrv" "privateKey") [] privateKey)
+                        )
+                        (call -relay- ("op" "noop") [])
+                       )
+                       (xor
+                        (seq
+                         (call "PEER_ID" ("AccountService" "login") [signatureObject privateKey] res)
+                         (call -relay- ("op" "noop") [])
+                        )
+                        (seq
+                         (call -relay- ("op" "noop") [])
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                        )
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                    )
+    `
+    return callFunction(
+        args,
+        {
+    "functionName" : "login",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "signatureObject" : {
+                    "tag" : "struct",
+                    "name" : "SignatureObject",
+                    "fields" : {
+                        "messageHash" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "r" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "s" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "v" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                },
+                "privateKey" : {
+                    "tag" : "scalar",
+                    "name" : "string"
                 }
             }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "scalar",
+                    "name" : "bool"
+                }
+            ]
         }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
     }
+},
+        script
+    )
 }
-    );
-}
-      
-// Functions
-
