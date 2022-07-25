@@ -36,6 +36,6 @@ describe('#services Test', () => {
   // 1. FileService
   // 2. PeerService
   // 3. IPFSService
-  // 4. DB integration
+  // 4. DBIntegration
 
 })
