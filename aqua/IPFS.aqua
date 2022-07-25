@@ -1,1 +1,9 @@
--- // ipfs calls
+data IPFSHTTPClient:
+    host: string
+    port: string
+    protocol: string
+    pathname: string
+
+service IPFS("ipfs_service"):
+    createConnection() -> IPFSHTTPClient
+    uploadFile()
