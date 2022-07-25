@@ -3,8 +3,8 @@
 data File:
   path: string
 
+alias CID : string
 service FileService("file_service"):
-   uploadFile(file: File)
-   shareFile(recepients: []string, cid: string)
+   uploadFile(file: File) -> CID
+   shareFile(recepients: []string, file: File)
    getUploadHistory(userId: string) -> []string
-   
