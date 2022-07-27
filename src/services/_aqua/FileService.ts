@@ -17,9 +17,9 @@ import {
 // Services
 
 export interface FileServiceDef {
-    getUploadHistory: (userId: string, callParams: CallParams<'userId'>) => string[] | Promise<string[]>;
-    shareFile: (recepients: string[], cid: string, callParams: CallParams<'recepients' | 'cid'>) => void | Promise<void>;
-    uploadFile: (file: { path: string; }, callParams: CallParams<'file'>) => void | Promise<void>;
+    getSharedFiles: (publicKey: string, callParams: CallParams<'publicKey'>) => { path: string; publicKey: string; timestamp: string; }[] | Promise<{ path: string; publicKey: string; timestamp: string; }[]>;
+    shareFile: (publicKey: string, file: { path: string; publicKey: string; timestamp: string; }, callParams: CallParams<'publicKey' | 'file'>) => void | Promise<void>;
+    uploadFile: (file: { path: string; publicKey: string; timestamp: string; }, callParams: CallParams<'file'>) => string | Promise<string>;
 }
 export function registerFileService(service: FileServiceDef): void;
 export function registerFileService(serviceId: string, service: FileServiceDef): void;
@@ -35,12 +35,12 @@ export function registerFileService(...args: any) {
     "functions" : {
         "tag" : "labeledProduct",
         "fields" : {
-            "getUploadHistory" : {
+            "getSharedFiles" : {
                 "tag" : "arrow",
                 "domain" : {
                     "tag" : "labeledProduct",
                     "fields" : {
-                        "userId" : {
+                        "publicKey" : {
                             "tag" : "scalar",
                             "name" : "string"
                         }
@@ -52,8 +52,22 @@ export function registerFileService(...args: any) {
                         {
                             "tag" : "array",
                             "type" : {
-                                "tag" : "scalar",
-                                "name" : "string"
+                                "tag" : "struct",
+                                "name" : "File",
+                                "fields" : {
+                                    "path" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    },
+                                    "publicKey" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    },
+                                    "timestamp" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
+                                }
                             }
                         }
                     ]
@@ -64,16 +78,27 @@ export function registerFileService(...args: any) {
                 "domain" : {
                     "tag" : "labeledProduct",
                     "fields" : {
-                        "recepients" : {
-                            "tag" : "array",
-                            "type" : {
-                                "tag" : "scalar",
-                                "name" : "string"
-                            }
-                        },
-                        "cid" : {
+                        "publicKey" : {
                             "tag" : "scalar",
                             "name" : "string"
+                        },
+                        "file" : {
+                            "tag" : "struct",
+                            "name" : "File",
+                            "fields" : {
+                                "path" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "publicKey" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "timestamp" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                }
+                            }
                         }
                     }
                 },
@@ -93,13 +118,27 @@ export function registerFileService(...args: any) {
                                 "path" : {
                                     "tag" : "scalar",
                                     "name" : "string"
+                                },
+                                "publicKey" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                },
+                                "timestamp" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
                                 }
                             }
                         }
                     }
                 },
                 "codomain" : {
-                    "tag" : "nil"
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    ]
                 }
             }
         }
