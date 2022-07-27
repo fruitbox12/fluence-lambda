@@ -8,9 +8,11 @@
   "scripts": {
     "compile-aqua": "aqua -i ./aqua/ -o ./src/services/_aqua",
     "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\"",
-    "test": "jest"
+    "test": "jest",
+    "start-dev": "node -r ts-node/register src/index.ts"
   },
   "dependencies": {
+    "@fluencelabs/aqua-dht": "^0.2.5",
     "@fluencelabs/aqua-ipfs": "^0.5.5",
     "@fluencelabs/fluence": "^0.23.0",
     "@fluencelabs/fluence-network-environment": "^1.0.13",
