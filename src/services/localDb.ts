@@ -1,30 +1,28 @@
-// sqlite db
+import sqlite3 from 'sqlite3'
+import {open} from 'sqlite'
 
-// sqlite db should live inside the peer
-// find a way to handle requests to the peer
-// instant file sharing -> refer to the docs on content addresssing and ci
-// this lives inside the client peer
-import sqlite3 from "sqlite3";
-import { open, Database } from "sqlite";
+async function openDb(dbName: string) {
+  return open({
+    filename: dbName,
+    driver: sqlite3.Database
+  })
+}
 
-export class LocalDb {
-  
-  public static createDbConnections = async () => {
-    const accountsDbOptions = {
-      filename: './accounts.db',
-      driver: sqlite3.cached.Database
-    }
+export async function saveFileshare(path: string, publicKey: string, timestamp: number)  {
+  try {
+    const fileDb = await openDb('fileShare.db')
+    await fileDb.exec(`INSERT INTO files VALUES (${path}, ${publicKey}, ${timestamp})`)
+  } catch(error) {
+    console.error(`Failed operation with Error:`, error)
+  }
+}
 
-    const fileSharingDbOptions = {
-      filename: './fileSharing.db',
-      driver: sqlite3.cached.Database
-    }
-    
-    try {
-      const [accountsDb, fileSharingDb ] = await Promise.all([open(accountsDbOptions), open(fileSharingDbOptions)])
-      return [accountsDb, fileSharingDb]
-    } catch (error) {
-      console.info(`Failed to open db with`, error);
-    }
+export async function getSharedFilesByPublicKey(publicKey: string) {
+  try {
+    const fileDb = await openDb('fileShare.db')
+    const files = await fileDb.all('SELECT FROM files WHERE publicKey=?', publicKey)
+    return files
+  } catch(error) {
+    console.error(`Failed operation with Error:`, error)
   }
 }
