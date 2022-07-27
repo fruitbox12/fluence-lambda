@@ -5,12 +5,12 @@ import Web3 from 'web3'
 import { registerEventService, EventServiceDef } from './services/_aqua/EventService'
 import { registerFileService, FileServiceDef } from './services/_aqua/FileService'
 import { registerAccountService, AccountServiceDef } from './services/_aqua/AccountService'
-import { AccountService } from './services'
+import { AccountService, FileService } from './services'
 
 const peerId = '12D3KooWJBjU564QNF8MKQnyPXqvcgf4bxp7hHLiwYp8zkgMwpbz'
 const publicKey = 'CAESIHxWxmPmfcHVAkxP1ahfyCXrTwUNTymZv8gmJVC5mNLZ'
 
-async function server() {
+async function main() {
   await Fluence.start({
     connectTo: krasnodar[0],
     KeyPair: await KeyPair.fromEd25519SK(Buffer.from(publicKey, 'base64'))
@@ -24,12 +24,12 @@ async function server() {
   const INFURA_PROVIDER_URL = `https://goerli.infura.io/v3/${INFURA_API_KEY}`
   const provider = new Web3.providers.HttpProvider(INFURA_PROVIDER_URL)
   const web3 = new Web3(provider)
-  
+
   // services
   // @ts-ignore
   registerAccountService(new AccountService(web3))
-  // IPFS
-  // FileService
+  // @ts-ignore
+  registerFileService(new FileService())
 }
 
-export { server }
+export { main }
