@@ -2,9 +2,11 @@
 
 data File:
   path: string
+  publicKey: string
+  timestamp: string
 
-alias CID : string
+alias Path : string
 service FileService("file_service"):
-   uploadFile(file: File) -> CID
-   shareFile(recepients: []string, file: File)
-   getUploadHistory(userId: string) -> []string
+   uploadFile(file: File) -> Path
+   shareFile(publicKey: string, file: File)
+   getSharedFiles(publicKey: string) -> []File
